@@ -38,6 +38,54 @@ sample_name_2,treatment
 
 3. Control and treatment froup shuold be spesified when calling tool (see Usage section)
 
+## Project architecture
+```text
+dge_pipeline/
+│
+├── data/                          # Input data (counts, design matrix)
+│   ├── example_counts.csv
+│   └── group_mapping.csv
+│
+├── results/                       # Output folder (plots, reports, tables)
+│   └── (generated at runtime)
+|
+├── eda_pipeline/                 # Preparation and normalisation of the data
+│   ├── __init__.py
+│   ├── main.py                   # CLI entry point
+│   ├── io.py                     # Data loading and saving
+│   ├── normalisation.py          # data normalisation
+│   ├── dimensionality.py         # PCA, UMAP
+│   ├── visualizations.py         # Plotting (PCA, UMAP etc.)
+│   ├── dashboard.py              # Dash interactive app
+│   ├── utils.py                  # Helper functions
+│   └── config.py                 # Default parameters, constants
+│
+├── dge_pipeline/                 # Core Python package
+│   ├── __init__.py
+│   ├── main.py                   # CLI entry point
+│   ├── io.py                     # Data loading and saving
+│   ├── eda.py                    # exploritary data analysis + data normalisation
+│   ├── differential.py           # pyDESeq2 interface and stats
+│   ├── visualizations.py         # Plotting (heatmap, volcano, MA, etc.)
+│   ├── dashboard.py              # Dash interactive app
+│   ├── utils.py                  # Helper functions if needed
+│   └── config.py                 # Default parameters, constants
+│
+├── docker/                       # Docker-related files
+│   └── Dockerfile
+│
+├── notebooks/                    # Example and exploratory notebooks
+│   └── example_analysis.ipynb
+│
+├── tests/                        # Unit tests ( maybe )
+│   └── test_differential.py
+│
+├── .gitignore
+├── README.md
+├── LICENSE
+├── requirements.txt              # All necessary pip packages
+├── setup.py                      # If packaging as installable module
+└── gea_deseq.py                  # Wrapper script to call_
 
 ## Visuals
 ... in progress ...
