@@ -1,19 +1,34 @@
-# dashboard.py
+from dash import Dash, html
+PLOT_STYLE = {'maxWidth': '800px', 'margin': '0 auto', 'paddingBottom': '30px'}
 
-import pandas as pd
-import plotly.express as px
-from config import DATA_PATH
-from dash import Dash, dcc, html, Input, Output
+def run_dashboard(count_matrix, design_matrix, info_messages):
+
+    # Compute logCPM
 
 
-# Initialize app
-app = Dash(__name__)
+    # Library sizes calculation
 
-# Layout
-app.layout = html.Div([
-    html.H1("RNA-Seq Dashboard (in procces)", style={'textAlign': 'center'}),
-])
+    # PCA and UMAP
 
-# Run server
-if __name__ == "__main__":
+    # Density plot of logCPM values
+
+    # Correlation heatmap
+
+    #================ Dash App =====================
+    app = Dash(__name__)
+
+    # Information how script called
+    info_div = html.Div([
+        html.H4("Info and Status Messages:"),
+        *[html.P(msg) for msg in info_messages]
+    ], style={'padding': '10px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd', 'marginBottom': '20px'})
+
+
+    app.layout = html.Div([
+        info_div,
+        # Page name
+        html.H1("RNA-Seq Dashboard", style={'textAlign': 'center'}),
+        # Add plots here
+    ], style=PLOT_STYLE)
+
     app.run(debug=True)
