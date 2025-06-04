@@ -3,7 +3,7 @@ from sklearn.decomposition import PCA
 import numpy as np
 
 
-def plot_pca(log_counts, design):
+plot_pca(log_counts, design):
     pca = PCA(n_components=2)
     reduced = pca.fit_transform(log_counts.T)
     conditions = design.loc[log_counts.columns, 'condition']
