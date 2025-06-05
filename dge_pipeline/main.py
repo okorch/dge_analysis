@@ -1,22 +1,16 @@
-from .dashboard import run_dashboard
-import sys
+from config.config import OUTPUT_PATH
 
-def main():
+def main(count_matrix, design_matrix, tested_level, control_level):
 
-    args = sys.argv
-
-    if len(args[1:]) < 2:
-        print("Usage: python dge_pipeline.py <tested_level> <control_level>")
-        sys.exit(1)
-
-    tested_level = args[1]
-    control_level = args[2]
     contrasts = [tested_level, control_level]
 
-    # ============= Run DGE analysis ==================
+    # Run DGE and clean result from NaN
 
-    summary_df = None
+    # save files to OUTPUT_PATH
 
-    # ============= Run dashboard =============
-    run_dashboard(summary_df)
+
+    clear_summary_df = None
+
+    return clear_summary_df
+
 
