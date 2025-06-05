@@ -1,34 +1,42 @@
-from dash import Dash, html
+from dash import html
 PLOT_STYLE = {'maxWidth': '800px', 'margin': '0 auto', 'paddingBottom': '30px'}
 
-def run_dashboard(count_matrix, design_matrix, info_messages):
+def eda_dashboard_layout(count_matrix, design_matrix, info_messages):
+    # === Preprocessing ===
 
-    # Compute logCPM
+    # === Figures ===
 
+    # Density Plot
 
-    # Library sizes calculation
+    # Correlation Heatmap
 
-    # PCA and UMAP
+    # === Layout Components ===
 
-    # Density plot of logCPM values
-
-    # Correlation heatmap
-
-    #================ Dash App =====================
-    app = Dash(__name__)
-
-    # Information how script called
     info_div = html.Div([
         html.H4("Info and Status Messages:"),
         *[html.P(msg) for msg in info_messages]
-    ], style={'padding': '10px', 'backgroundColor': '#f9f9f9', 'border': '1px solid #ddd', 'marginBottom': '20px'})
+    ], style={
+        'padding': '10px',
+        'backgroundColor': '#f9f9f9',
+        'border': '1px solid #ddd',
+        'marginBottom': '20px'
+    })
 
-
-    app.layout = html.Div([
+    layout = html.Div([
         info_div,
-        # Page name
         html.H1("RNA-Seq Dashboard", style={'textAlign': 'center'}),
-        # Add plots here
-    ], style=PLOT_STYLE)
 
-    app.run(debug=True)
+        html.H2("Library Sizes", style={'textAlign': 'center'}),
+        # Add bar chart Library sizes
+
+        html.H2("PCA", style={'textAlign': 'center'}),
+        # Add scatter plot PCA
+
+        html.H2("UMAP", style={'textAlign': 'center'}),
+        # Add scatter plot UMAP
+
+        html.H2("Sample Correlation Heatmap", style={'textAlign': 'center'}),
+        # Add correlation heatmap
+    ], style={'padding': '20px'})
+
+    return layout
