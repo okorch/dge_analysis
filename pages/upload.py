@@ -2,35 +2,38 @@ from dash import html, dcc, callback, Output, Input, State
 import dash
 import base64, io
 import pandas as pd
+from config.config import MAIN_FONT
 
 dash.register_page(__name__, path="/upload")
 
 layout = html.Div([
-    html.H3("Upload Files"),
+    html.H3("Upload Files", style={"textAlign": "center"}),
 
     dcc.Upload(id="upload-counts", children=html.Button("Upload Count Matrix")),
-    html.Div(id="counts-filename"),  # show uploaded file name
-    html.Br(),
+    html.Div(id="counts-filename"),
     html.Br(),
 
     html.Label("Gene names column (in count matrix):"),
-    dcc.Input(id="gene-column", type="text", placeholder="name of column containing gene names"),
-    html.Div(id="gene-column-output"),  # show error message if column not found
-    html.Br(),
+    dcc.Input(id="gene-column", type="text", placeholder="Column name"),
+    html.Div(id="gene-column-output"),
     html.Br(),
 
     dcc.Upload(id="upload-design", children=html.Button("Upload Design Matrix")),
-    html.Div(id="design-filename"),  # show uploaded file name
-    html.Br(),
+    html.Div(id="design-filename"),
     html.Br(),
 
     dcc.Link("Continue to EDA", href="/eda"),
 
-    # Store uploaded and processed data
     dcc.Store(id="stored-counts"),
     dcc.Store(id="stored-design"),
     dcc.Store(id="stored-gene-column")
-])
+], style={
+    "fontFamily": MAIN_FONT,
+    "maxWidth": "600px",
+    "margin": "auto",
+    "textAlign": "center",
+    "padding": "2rem"
+})
 
 # Show uploaded file names
 @callback(
@@ -54,9 +57,8 @@ def read_count_matrix(contents, gene_column=None):
     df = pd.read_csv(io.StringIO(text), delimiter=delimiter)
 
     if gene_column:
+        gene_column = gene_column.strip()
         try:
-            if gene_column not in df.columns:
-                raise ValueError("Gene column not found")
             df.set_index(gene_column, inplace=True)
             df.index.name = None
         except Exception as e:

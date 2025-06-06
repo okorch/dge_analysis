@@ -2,20 +2,29 @@ from dash import html, dcc, callback, Input, Output, State
 import dash
 import pandas as pd
 from eda_pipeline.dashboard import eda_dashboard_layout
+from config.config import MAIN_FONT
 
 dash.register_page(__name__, path="/eda")
 
 layout = html.Div([
-    html.H3("Exploratory Data Analysis"),
+    html.H3("Exploratory Data Analysis", style={"textAlign": "center"}),
+
     dcc.Loading(html.Div(id="eda-output")),
+    html.Br(),
     dcc.Link("Continue to DGE", href="/dge"),
 
-    dcc.Store(id="stored-counts"), # counts from upload.py JSON format
-    dcc.Store(id="stored-design"), # design matrix from upload.py JSON format
-
-    dcc.Store(id="new-stored-counts"), # will load them later in update eda JSON format
-    dcc.Store(id="new-stored-design") # will load them later in update eda JSON format
-])
+    # Hidden stores
+    dcc.Store(id="stored-counts"),
+    dcc.Store(id="stored-design"),
+    dcc.Store(id="new-stored-counts"),
+    dcc.Store(id="new-stored-design")
+], style={
+    "fontFamily": MAIN_FONT,
+    "maxWidth": "600px",
+    "margin": "auto",
+    "textAlign": "center",
+    "padding": "2rem"
+})
 
 @callback(
     Output("eda-output", "children"),

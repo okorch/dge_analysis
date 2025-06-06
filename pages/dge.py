@@ -2,32 +2,47 @@ from dash import html, dcc, callback, Input, Output, State
 import dash
 import pandas as pd
 from dge_pipeline.dashboard import dge_dashboard_layout
+from config.config import MAIN_FONT
 
 dash.register_page(__name__, path="/dge")
 
 layout = html.Div([
-    html.H3("Differential Gene Expression"),
+    html.H3("Differential Gene Expression", style={"textAlign": "center"}),
+
     html.Div([
-
-        html.Label("Select Tested Condition:"),
-        dcc.Dropdown(id="select-tested", options=[]),
-
-        html.Label("Select Control Condition:"),
-        dcc.Dropdown(id="select-control", options=[]),
-
-        html.Button("Run DGE", id="run-dge", n_clicks=0),
-
-    ], style={"width": "40%", "margin": "auto"}),
+# Dropdown for tested
+        html.Div([
+            html.Label("Select Tested Condition:", style={"marginBottom": "5px"}),
+            dcc.Dropdown(id="select-tested", options=[], placeholder="Select...",
+                         style={"width": "100%"})
+        ], style={"width": "100%", "marginBottom": "20px"}),
+# Dropdown for control
+        html.Div([ # Dropdown for control
+            html.Label("Select Control Condition:", style={"marginBottom": "5px"}),
+            dcc.Dropdown(id="select-control", options=[], placeholder="Select...",
+                         style={"width": "100%"})
+        ], style={"width": "100%", "marginBottom": "20px"}),
+# Button
+        html.Button("Run DGE", id="run-dge", n_clicks=0, style={"marginTop": "10px"})
+    ], style={
+        "width": "400px",
+        "margin": "0 auto",
+        "textAlign": "left",
+        "fontFamily": MAIN_FONT
+    }),
 
     html.Hr(),
 
     html.Div(id="dge-layout-container"),
 
-    dcc.Store(id="new-stored-counts"), # preprocessed counts JSON format
-    dcc.Store(id="new-stored-design"), # preprocessed design matrix JSON format
-
-    dcc.Store(id="dge-result-store") # output dge results JSON format
-])
+# Stores
+    dcc.Store(id="new-stored-counts"),
+    dcc.Store(id="new-stored-design"),
+    dcc.Store(id="dge-result-store")
+], style={
+    "fontFamily": MAIN_FONT,
+    "padding": "20px"
+})
 
 @callback(
     Output("select-tested", "options"),
@@ -43,6 +58,7 @@ def populate_condition_dropdowns(design_json):
 
     design_matrix = pd.read_json(design_json, orient="split")
     condition_levels = sorted(design_matrix["condition"].unique()) # find unique levels
+
     options = [ {"label": cond, "value": cond} for cond in condition_levels ]
     return options, options
 
