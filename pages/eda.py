@@ -2,7 +2,11 @@ from dash import html, dcc, callback, Input, Output, State
 import dash
 import pandas as pd
 from eda_pipeline.dashboard import eda_dashboard_layout
-from config.config import MAIN_FONT
+from dash_bootstrap_templates import load_figure_template
+import dash_bootstrap_components as dbc
+
+
+load_figure_template('JOURNAL')
 
 dash.register_page(__name__, path="/eda")
 
@@ -11,7 +15,9 @@ layout = html.Div([
 
     dcc.Loading(html.Div(id="eda-output")),
     html.Br(),
-    dcc.Link("Continue to DGE", href="/dge"),
+    dbc.Button("Continue to DGE", href="/dge", color="secondary", outline=True, size="lg", className="mb-3",
+               style={"fontSize": "18px"}),
+
 
     # Hidden stores
     dcc.Store(id="stored-counts"),
@@ -19,7 +25,6 @@ layout = html.Div([
     dcc.Store(id="new-stored-counts"),
     dcc.Store(id="new-stored-design")
 ], style={
-    "fontFamily": MAIN_FONT,
     "maxWidth": "600px",
     "margin": "auto",
     "textAlign": "center",
