@@ -46,4 +46,5 @@ app.layout = html.Div([
 })
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8085)
+    # app.run(host="0.0.0.0", port=8050, debug=True) # when creating docker
+    app.run( port=8050, debug=True)

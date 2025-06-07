@@ -126,10 +126,10 @@ layout = html.Div([
         "padding": "2rem"
     }),
 
-    upload_layout,
-
     html.Div([ dbc.Button("Continue to EDA", href="/eda", color="secondary", outline=True, size="lg",
                className="mb-3")], style={"fontSize": "18px", "textAlign": "center"}),
+
+    upload_layout,
 
     dcc.Store(id="stored-counts"),
     dcc.Store(id="stored-design"),
