@@ -4,6 +4,8 @@ import pandas as pd
 from dge_pipeline.dashboard import dge_dashboard_layout
 from dash_bootstrap_templates import load_figure_template
 import dash_bootstrap_components as dbc
+from io import StringIO
+
 
 load_figure_template('JOURNAL')
 
@@ -60,7 +62,7 @@ def populate_condition_dropdowns(design_json):
     if not design_json:
         return [], []
 
-    design_matrix = pd.read_json(design_json, orient="split")
+    design_matrix = pd.read_json(StringIO(design_json), orient="split")
     condition_levels = sorted(design_matrix["condition"].unique()) # find unique levels
 
     options = [ {"label": cond, "value": cond} for cond in condition_levels ]
@@ -88,8 +90,8 @@ def update_dge_layout(n_clicks, tested, control, counts_json, design_json):
         return html.Div("Please select both tested and control conditions."), None
 
     # Load from stored JSON
-    count_matrix = pd.read_json(counts_json, orient="split")
-    design_matrix = pd.read_json(design_json, orient="split")
+    count_matrix = pd.read_json(StringIO(counts_json), orient="split")
+    design_matrix = pd.read_json(StringIO(design_json), orient="split")
 
     # Prepare data
 

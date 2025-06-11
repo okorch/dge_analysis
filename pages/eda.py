@@ -4,6 +4,7 @@ import pandas as pd
 from eda_pipeline.dashboard import eda_dashboard_layout
 from dash_bootstrap_templates import load_figure_template
 import dash_bootstrap_components as dbc
+from io import StringIO
 
 
 load_figure_template('JOURNAL')
@@ -47,8 +48,8 @@ def update_eda(counts_data, design_data):
 
 
     # Convert JSON to DataFrames
-    counts_df = pd.read_json(counts_data, orient='split')
-    design_df = pd.read_json(design_data, orient='split')
+    counts_df = pd.read_json(StringIO(counts_data), orient='split')
+    design_df = pd.read_json(StringIO(design_data), orient='split')
 
     # Run preprocessing
 
