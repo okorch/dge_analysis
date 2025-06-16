@@ -1,53 +1,8 @@
 import pandas as pd
 import umap.umap_ as umap
 from sklearn.decomposition import PCA
-
-from config import DATA_PATH, OUTPUT_PATH
-from normalisation import log_cpm
-
-
-
-def read_count_matrix(file_name, gene_names_col):
-    try:
-        file_path = DATA_PATH / file_name
-
-        if file_path.suffix == ".tsv":
-            separator = '\t'
-        else:
-            separator = ','
-
-        if not file_path.exists():
-            raise FileNotFoundError(f"File not found: {file_path}")
-
-        df = pd.read_csv(file_path, sep=separator)
-        df.set_index(df.columns[gene_names_col], inplace=True)
-        df = df.drop(df.columns[gene_names_col], axis=1)
-        return df
-
-    except Exception as e:
-        message = f"[read_count_matrix] Error occurred: {str(e)}"
-        print(message)
-        return None
-
-
-def read_design_matrix(file_name):
-    try:
-        file_path = DATA_PATH / file_name
-
-        if not file_path.exists():
-            raise FileNotFoundError(f"Design matrix file not found: {file_path}")
-
-        design_matrix = pd.read_csv(
-            file_path,
-            header=None,
-            names=['condition'],
-            index_col=0
-        )
-        return design_matrix
-    except Exception as e:
-        message = f"[read_design_matrix] Error occurred: {str(e)}"
-        print(message)
-        return None
+from .config import OUTPUT_PATH
+from .normalisation import log_cpm
 
 
 def check_data_dimensions(data):
@@ -220,6 +175,12 @@ def perform_umap(data, design_matrix=None):
         print(message)
         return None
 
+def calculate_lib_sizes(count_matrix, design_matrix):
+    lib_sizes = count_matrix.sum(axis=0).sort_values(ascending=False)
+    lib_df = pd.DataFrame({"Sample": lib_sizes.index, "Library Size": lib_sizes.values}, index=lib_sizes.index)
+    lib_df = pd.concat([lib_df, design_matrix], axis=1)
+    return lib_df
+
 
 def save_csv_file(data, file_name):
     try:
@@ -231,3 +192,31 @@ def save_csv_file(data, file_name):
         message = f"[save_csv_file] Error occurred: {str(e)}"
         print(message)
         return None
+
+
+def main(count_matrix, design_matrix):
+    # Check dimensions of count matrix
+    count_matrix = check_data_dimensions(count_matrix)
+
+    # Clear not numerical columns in count matrix, indexed should be already set to Gene Names
+    count_matrix = clear_not_numerical(count_matrix)
+    # Clear NaN in count matrix
+    count_matrix, message_nan = clear_nan(count_matrix)
+    # Select only unique genes in count matrix
+    count_matrix_clear, message_unique = select_unique_genes(count_matrix, keep='first')
+
+    # Check dimensions of design matrix
+
+    # Check that design matrix align with count matrix
+    comparable, _ = check_compatibility(count_matrix_clear, design_matrix)
+
+    if comparable:
+        info_messages = [message_nan, message_unique]  # info about how many genes were not identified or met twice
+
+        # Save files to OUTPUT_PATH
+        # save_csv_file(count_matrix_clear, "clear_count_mat")
+        # save_csv_file(design_matrix, 'design_mat')
+
+        return count_matrix, design_matrix, info_messages
+    else:
+        return None, None, ["Design matrix are false. There is some samples annotation missing or wrong."]
