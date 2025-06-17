@@ -1,53 +1,8 @@
 import pandas as pd
 import umap.umap_ as umap
 from sklearn.decomposition import PCA
-
 from config import DATA_PATH, OUTPUT_PATH
 from normalisation import log_cpm
-
-
-
-def read_count_matrix(file_name, gene_names_col):
-    try:
-        file_path = DATA_PATH / file_name
-
-        if file_path.suffix == ".tsv":
-            separator = '\t'
-        else:
-            separator = ','
-
-        if not file_path.exists():
-            raise FileNotFoundError(f"File not found: {file_path}")
-
-        df = pd.read_csv(file_path, sep=separator)
-        df.set_index(df.columns[gene_names_col], inplace=True)
-        df = df.drop(df.columns[gene_names_col], axis=1)
-        return df
-
-    except Exception as e:
-        message = f"[read_count_matrix] Error occurred: {str(e)}"
-        print(message)
-        return None
-
-
-def read_design_matrix(file_name):
-    try:
-        file_path = DATA_PATH / file_name
-
-        if not file_path.exists():
-            raise FileNotFoundError(f"Design matrix file not found: {file_path}")
-
-        design_matrix = pd.read_csv(
-            file_path,
-            header=None,
-            names=['condition'],
-            index_col=0
-        )
-        return design_matrix
-    except Exception as e:
-        message = f"[read_design_matrix] Error occurred: {str(e)}"
-        print(message)
-        return None
 
 
 def check_data_dimensions(data):
@@ -135,23 +90,6 @@ def check_compatibility(data, design_matrix):
         message = f"[check_compatibility] Error occurred: {str(e)}"
         print(message)
         return False, message
-
-
-def delete_samples(data, design_matrix, samples_names):
-    try:
-        data_copy = data.copy()
-        design_matrix_copy = design_matrix.copy()
-
-        data_copy = data_copy.drop(columns=samples_names, errors='ignore')
-        design_matrix_copy = design_matrix_copy.drop(index=samples_names, errors='ignore')
-
-        message = f"Deleted {len(samples_names)} samples from data and design matrix (ignored missing)."
-        return data_copy, design_matrix_copy, message
-
-    except Exception as e:
-        message = f"[delete_samples] Error occurred: {str(e)}"
-        print(message)
-        return None, None, message
 
 
 def calculate_library_sizes(count_matrix):
