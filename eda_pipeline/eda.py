@@ -153,6 +153,28 @@ def delete_samples(data, design_matrix, samples_names):
         print(message)
         return None, None, message
 
+
+def calculate_library_sizes(count_matrix):
+    """
+    Calculate the library sizes for each sample (total reads).
+
+    Parameters:
+        count_matrix (pd.DataFrame): Raw count matrix (genes x samples)
+
+    Returns:
+        pd.Series: Library sizes for each sample (sum of all reads)
+    """
+    try:
+        # Calculate the sum of counts across genes for each sample (library size)
+        library_sizes = count_matrix.sum(axis=0)
+        return library_sizes
+
+    except Exception as e:
+        message = f"[calculate_library_sizes] Error occurred: {str(e)}"
+        print(message)
+        return None
+
+
 def perform_pca(data, design_matrix=None):
     try:
         # Log normalize the data
