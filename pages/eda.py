@@ -21,7 +21,7 @@ layout = html.Div([
                style={"fontSize": "18px"}),
 
 
-    # Hidden stores
+
     dcc.Store(id="stored-counts"),
     dcc.Store(id="stored-design"),
     dcc.Store(id="new-stored-counts"),

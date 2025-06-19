@@ -1,7 +1,7 @@
 import pandas as pd
 import umap.umap_ as umap
 from sklearn.decomposition import PCA
-from .config import OUTPUT_PATH
+from config.config import OUTPUT_PATH
 from .normalisation import log_cpm
 
 

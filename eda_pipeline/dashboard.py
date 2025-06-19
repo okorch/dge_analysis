@@ -43,7 +43,6 @@ def eda_dashboard_layout(count_matrix, design_matrix, info_messages):
 
     layout = html.Div([
         info_div,
-        html.H1("RNA-Seq Dashboard", style={'textAlign': 'center'}),
 
         html.H2("Library Sizes", style={'textAlign': 'center'}),
 
