@@ -5,6 +5,7 @@ from eda_pipeline.dashboard import eda_dashboard_layout
 from dash_bootstrap_templates import load_figure_template
 import dash_bootstrap_components as dbc
 from io import StringIO
+from eda_pipeline.main import main
 
 
 load_figure_template('JOURNAL')
@@ -20,13 +21,13 @@ layout = html.Div([
                style={"fontSize": "18px"}),
 
 
-    # Hidden stores
+
     dcc.Store(id="stored-counts"),
     dcc.Store(id="stored-design"),
     dcc.Store(id="new-stored-counts"),
     dcc.Store(id="new-stored-design")
 ], style={
-    "maxWidth": "600px",
+    "maxWidth": "900px",
     "margin": "auto",
     "textAlign": "center",
     "padding": "2rem"
@@ -46,21 +47,19 @@ def update_eda(counts_data, design_data):
     if not counts_data or not design_data:
         return dash.no_update, dash.no_update, dash.no_update
 
-
     # Convert JSON to DataFrames
     counts_df = pd.read_json(StringIO(counts_data), orient='split')
     design_df = pd.read_json(StringIO(design_data), orient='split')
 
     # Run preprocessing
+    preprocessed_data = main(counts_df, design_df)
+    new_counts_matrix, new_design_matrix = preprocessed_data[0], preprocessed_data[1]
 
     # Convert back to JSON to store
+    new_counts_json = new_counts_matrix.to_json(date_format='iso', orient='split')
+    new_design_json = new_design_matrix.to_json(date_format='iso', orient='split')
 
-    # Return output div and updated stores
-    layout = eda_dashboard_layout(counts_df, design_df, ['info_messages'])
-    new_counts_json = None
-    new_design_json = None
+    # Run preprocessing and layout configuration
+    layout = eda_dashboard_layout(*preprocessed_data[2:])
 
     return layout, new_counts_json, new_design_json
-
-
-
