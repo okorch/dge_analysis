@@ -1,8 +1,8 @@
 import pandas as pd
 import umap.umap_ as umap
 from sklearn.decomposition import PCA
-from config import DATA_PATH, OUTPUT_PATH
-from normalisation import log_cpm
+from config.config import OUTPUT_PATH
+from .normalisation import log_cpm
 
 
 def check_data_dimensions(data):
@@ -92,26 +92,21 @@ def check_compatibility(data, design_matrix):
         return False, message
 
 
-def calculate_library_sizes(count_matrix):
-    """
-    Calculate the library sizes for each sample (total reads).
-
-    Parameters:
-        count_matrix (pd.DataFrame): Raw count matrix (genes x samples)
-
-    Returns:
-        pd.Series: Library sizes for each sample (sum of all reads)
-    """
+def delete_samples(data, design_matrix, samples_names):
     try:
-        # Calculate the sum of counts across genes for each sample (library size)
-        library_sizes = count_matrix.sum(axis=0)
-        return library_sizes
+        data_copy = data.copy()
+        design_matrix_copy = design_matrix.copy()
+
+        data_copy = data_copy.drop(columns=samples_names, errors='ignore')
+        design_matrix_copy = design_matrix_copy.drop(index=samples_names, errors='ignore')
+
+        message = f"Deleted {len(samples_names)} samples from data and design matrix (ignored missing)."
+        return data_copy, design_matrix_copy, message
 
     except Exception as e:
-        message = f"[calculate_library_sizes] Error occurred: {str(e)}"
+        message = f"[delete_samples] Error occurred: {str(e)}"
         print(message)
-        return None
-
+        return None, None, message
 
 def perform_pca(data, design_matrix=None):
     try:
@@ -179,6 +174,12 @@ def perform_umap(data, design_matrix=None):
         message = f"[perform_umap] Error occurred: {str(e)}"
         print(message)
         return None
+
+def calculate_library_sizes(count_matrix, design_matrix):
+    lib_sizes = count_matrix.sum(axis=0).sort_values(ascending=False)
+    lib_df = pd.DataFrame({"Sample": lib_sizes.index, "Library Size": lib_sizes.values}, index=lib_sizes.index)
+    lib_df = pd.concat([lib_df, design_matrix], axis=1)
+    return lib_df
 
 
 def save_csv_file(data, file_name):

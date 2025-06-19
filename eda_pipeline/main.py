@@ -1,9 +1,8 @@
-from eda import perform_pca, perform_umap, check_data_dimensions, clear_not_numerical, clear_nan, select_unique_genes, check_compatibility,calculate_library_sizes, save_csv_file
-from config import  OUTPUT_PATH
+from .eda import *
+from config.config import  OUTPUT_PATH
 
 def main(count_matrix, design_matrix):
     info_messages = []
-
 
     count_matrix = check_data_dimensions(count_matrix)
     if count_matrix is None:
@@ -33,12 +32,14 @@ def main(count_matrix, design_matrix):
     if not compatibility:
         info_messages.append("Error: Design matrix is not compatible with count matrix.")
 
-    library_sizes = calculate_library_sizes(count_matrix)
-    info_messages.append(f"Library sizes for each sample: {library_sizes}")
-
+    # ============ for visualisation =====================
+    lib_df = calculate_library_sizes(count_matrix, design_matrix)
     pca_result = perform_pca(count_matrix, design_matrix)
     umap_result = perform_umap(count_matrix, design_matrix)
+    log_data = log_cpm(count_matrix)
+    corr_matrix = log_data.corr()
 
+    # ============ saving files =====================
     if len(info_messages) == 0:
         files_to_save = [
             (count_matrix, "processed_count_matrix.csv"),
@@ -54,5 +55,5 @@ def main(count_matrix, design_matrix):
 
         info_messages.append(f"All results saved to {OUTPUT_PATH}")
 
-    return count_matrix, design_matrix, pca_result, umap_result, info_messages
+    return count_matrix, design_matrix, lib_df, pca_result, umap_result, corr_matrix, info_messages
 
