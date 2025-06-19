@@ -10,24 +10,20 @@ Despite its accessibility, differential gene expression (DGE) analysis often req
 The tool consists of 2 different parts:
 
 1. **Exploratory Data Analysis**  \
-   The first step is to explore the raw count data. The tool performs *normalization* using **CPM** (counts per million). It then conducts dimensionality reduction and visualizes the results using **PCA** and **UMAP** plots to evaluate the similarity or dissimilarity between sample groups (e.g., patients with two different cancer types).
+   The first step is to explore the raw count data. The tool performs *normalization* using **CPM** (counts per million). It then conducts dimensionality reduction and visualizes the results using **PCA** and **UMAP** plots to evaluate the similarity or dissimilarity between sample groups (e.g., patients with two different cancer types) as well as provides **correlation heatmap** and **sequencing sizes** for all samples in the data.
 
 2. **Differential Gene Expression Analysis and Results Visualization** \
    The tool supports DGE analysis for datasets both with and without replicates (with a minimum of one sample per group). It utilizes the **pyDESeq2** library to fit a **generalized linear model (GLM)**, perform statistical testing, and calculate both raw and adjusted *p-values* (FDR correction).
 
    The analysis results are presented through a rich interactive dashboard that includes:
 
-   - **Volcano plots** for visualizing significantly expressed genes (with and without labels for the top 10 upregulated and downregulated genes)
-   - **Heatmaps** for significantly up- and downregulated genes (based on raw counts)
-   - **Gene interaction networks** for genes with more than 2-fold change and significant p-values
+   - **Volcano plots** for visualizing significantly expressed genes
    - **MA plots** (mean expression vs. log2 fold change)
-   - **Venn diagrams** for comparing DEGs across multiple groups
-   - **Cluster dendrograms** to show sample similarity
-   - **Interactive tables** for filtering and exploring DEGs
+   - **P-Value distribution histograms** 
 
 ### User Input
 
-1. **Count matrix file**: A CSV or TSV file with sample names as columns and gene IDs as rows.  
+1. **Count matrix file**: A CSV or TSV file   
 2. **Group mapping file**: A CSV file without headers containing two columns:
 
 ```
@@ -36,71 +32,71 @@ sample_name_2,treatment
 ...
 ```
 
-3. Control and treatment froup shuold be spesified when calling tool (see Usage section)
+3. Control and treatment groups should be specified when calling tool (see Usage section)
 
 ## Project architecture
 ```text
 dge_pipeline/
-│
-├── data/                          # Input data (counts, design matrix)
-│   ├── example_counts.csv
-│   └── group_mapping.csv
-│
-├── results/                       # Output folder (plots, reports, tables)
-│   └── (generated at runtime)
-|
-├── eda_pipeline/                 # Preparation and normalisation of the data
-│   ├── __init__.py
-│   ├── main.py                   # CLI entry point
-│   ├── io.py                     # Data loading and saving
-│   ├── normalisation.py          # data normalisation
-│   ├── dimensionality.py         # PCA, UMAP
-│   ├── visualizations.py         # Plotting (PCA, UMAP etc.)
-│   ├── dashboard.py              # Dash interactive app
-│   ├── utils.py                  # Helper functions
-│   └── config.py                 # Default parameters, constants
-│
-├── dge_pipeline/                 # Core Python package
-│   ├── __init__.py
-│   ├── main.py                   # CLI entry point
-│   ├── io.py                     # Data loading and saving
-│   ├── eda.py                    # exploritary data analysis + data normalisation
-│   ├── differential.py           # pyDESeq2 interface and stats
-│   ├── visualizations.py         # Plotting (heatmap, volcano, MA, etc.)
-│   ├── dashboard.py              # Dash interactive app
-│   ├── utils.py                  # Helper functions if needed
-│   └── config.py                 # Default parameters, constants
-│
-├── docker/                       # Docker-related files
-│   └── Dockerfile
-│
-├── notebooks/                    # Example and exploratory notebooks
-│   └── example_analysis.ipynb
-│
-├── tests/                        # Unit tests ( maybe )
-│   └── test_differential.py
-│
-├── .gitignore
 ├── README.md
-├── LICENSE
-├── requirements.txt              # All necessary pip packages
-├── setup.py                      # If packaging as installable module
-└── gea_deseq.py                  # Wrapper script to call_
+├── app.py
+├── config
+│   ├── __init__.py
+│   └── config.py
+├── dge_pipeline
+│   ├── __main__.py
+│   ├── dashboard.py
+│   ├── dge.py
+│   └── main.py
+├── eda_pipeline
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── dashboard.py
+│   ├── eda.py
+│   ├── main.py
+│   └── normalisation.py
+├── pages
+│   ├── dge.py
+│   ├── eda.py
+│   ├── main_page.py
+│   └── upload.py
+└── requirements.txt
+```
 
 ## Visuals
 ... in progress ...
 
 ## Installation
-... in progress ...
+### Instalation from GitHub
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/dge_pipeline.git
+cd dge_pipeline
 
-## Usage
-Preprosessing
-``` linux
-eda.py [path to the data file] [path to the file with groups mapping] [type of normalisation]
+# Create and activate a virtual environment (optional but recommended)
+python3 -m venv venv
+source venv/bin/activate
+
+# Upgrade pip and install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# Run the application
+python app.py
+
 ```
 
-``` linux
-gea_deseq.py [path to the data file] [path to the file with groups mapping] [name for control group] [name for reference group]
+### Instalation from Docker
+To run this app using Docker, make sure Docker is installed on your machine. Then follow these steps:
+```bash
+# Clone the repository
+git clone https://github.com/yourname/dge_pipeline.git
+cd dge_pipeline
+
+# Build Docker image using provided config files
+docker build -t dge_pipeline_app .
+
+# Run image
+docker run -it --rm -p 8501:8501 dge_pipeline_app
 ```
 
 ## Support
@@ -115,3 +111,6 @@ gea_deseq.py [path to the data file] [path to the file with groups mapping] [nam
 
 ## Project status
 development
+
+## Similar projects 
+[Visit BigOmics RNA-Seq Tool](https://bigomics.ch/rna-seq-data-analysis)
