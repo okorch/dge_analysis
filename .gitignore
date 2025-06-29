@@ -19,6 +19,3 @@ env/
 *.log
 *.tmp
 *.bak
-
-# Dockerfile
-Dockerfile
