@@ -15,7 +15,13 @@ dash.register_page(__name__, path="/eda")
 layout = html.Div([
     html.H3("Exploratory Data Analysis", style={"textAlign": "center"}),
 
-    dcc.Loading(html.Div(id="eda-output")),
+    dcc.Loading(
+        id="loading-spinner",
+        type="circle",
+        children=html.Div(id="eda-output"),
+        fullscreen=False,
+    ),
+
     html.Br(),
     dbc.Button("Continue to DGE", href="/dge", color="secondary", outline=True, size="lg", className="mb-3",
                style={"fontSize": "18px"}),
@@ -24,6 +30,7 @@ layout = html.Div([
 
     dcc.Store(id="stored-counts"),
     dcc.Store(id="stored-design"),
+    dcc.Store(id="contrast-column-output"),
     dcc.Store(id="new-stored-counts"),
     dcc.Store(id="new-stored-design")
 ], style={
@@ -40,9 +47,10 @@ layout = html.Div([
 
     Input("stored-counts", "data"),
     Input("stored-design", "data"),
+    Input("contrast-column-output", "data"),
     prevent_initial_call=True
 )
-def update_eda(counts_data, design_data):
+def update_eda(counts_data, design_data, contrast_column):
 
     if not counts_data or not design_data:
         return dash.no_update, dash.no_update, dash.no_update
@@ -52,7 +60,7 @@ def update_eda(counts_data, design_data):
     design_df = pd.read_json(StringIO(design_data), orient='split')
 
     # Run preprocessing
-    preprocessed_data = main(counts_df, design_df)
+    preprocessed_data = main(counts_df, design_df, contrast_column)
     new_counts_matrix, new_design_matrix = preprocessed_data[0], preprocessed_data[1]
 
     # Convert back to JSON to store

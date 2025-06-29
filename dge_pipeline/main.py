@@ -1,10 +1,8 @@
-from config.config import OUTPUT_PATH
-import pandas as pd
 from .dge import *
 
 
 
-def main(count_matrix, design_matrix, contrast=None, output_name="dge_results.csv"):
+def main(count_matrix, design_matrix, contrast=None, output_name="dge_results.csv", design_formula=None):
     try:
         print(" Preparing data...")
         count_matrix_t, design_matrix_prepped = prepare_dge_data(count_matrix, design_matrix)
@@ -12,22 +10,26 @@ def main(count_matrix, design_matrix, contrast=None, output_name="dge_results.cs
             raise ValueError(" Data preparation failed.")
 
         # automatic contrast
-        conditions = design_matrix_prepped['condition'].unique().tolist()
-        print(f" Detected groups: {conditions}")
+        for col in design_matrix_prepped.columns:
+            design_matrix_prepped[col] = design_matrix_prepped[col].astype("category")
+
+        # Auto-generate design formula if not provided
+        if design_formula is None:
+            design_formula = "~ " + " + ".join(design_matrix_prepped.columns)
+            print(f"Auto design formula: {design_formula}")
 
         if contrast is None:
-            if len(conditions) == 2:
-                contrast = (conditions[1], conditions[0])  # varsayılan olarak sonuncu - ilk
-                print(f"⚙️ Auto contrast: {contrast[0]} vs {contrast[1]}")
+            main_var = design_matrix_prepped.columns[0]
+            levels = design_matrix_prepped[main_var].cat.categories.tolist()
+            if len(levels) == 2:
+                contrast = [main_var, levels[1], levels[0]]
+                print(f"Auto contrast: {contrast[1]} vs {contrast[2]} on '{main_var}'")
             else:
-                raise ValueError(f" Multiple condition levels found: {conditions}. Please specify `contrast`.")
-
-        elif contrast[0] not in conditions or contrast[1] not in conditions:
-            raise ValueError(f" Invalid contrast: {contrast}. Available groups: {conditions}")
+                raise ValueError(f"Multiple levels found in '{main_var}': {levels}. Please specify contrast explicitly.")
 
         # DGE analysis
         print(" Running PyDESeq2...")
-        dge_result = run_pydeseq2(count_matrix_t, design_matrix_prepped, list(contrast))
+        dge_result = run_pydeseq2(count_matrix_t, design_matrix_prepped, contrast, design_formula=design_formula)
         if dge_result is None:
             raise ValueError(" PyDESeq2 failed.")
 
@@ -47,20 +49,5 @@ def main(count_matrix, design_matrix, contrast=None, output_name="dge_results.cs
     except Exception as e:
         print(f"[main] Error: {e}")
         return None
-
-
-
-#def main(count_matrix, design_matrix, tested_level, control_level):
-
-    #contrasts = [tested_level, control_level]
-
-    # Run DGE and clean result from NaN
-
-    # save files to OUTPUT_PATH
-
-
-    #clear_summary_df = None
-
-   # return clear_summary_df
 
 

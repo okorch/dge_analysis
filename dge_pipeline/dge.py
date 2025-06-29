@@ -14,22 +14,35 @@ def prepare_dge_data(count_matrix, design_matrix):
         print(f"[prepare_dge_data] Error: {e}")
         return None, None
 
-def run_pydeseq2(count_matrix, design_matrix, contrasts):
+def run_pydeseq2(count_matrix, design_matrix, contrasts, design_formula=None):
+
     try:
+        if design_formula is None:
+            design_formula = "~ " + " + ".join(design_matrix.columns)
+
+        if len(contrasts) != 3:
+            raise ValueError("Contrasts must be a list like: [variable, level_1, level_2]")
+
+        contrast = contrasts  # [variable, level1, level2]
+        contrast_var = contrast[0]
+
+        if contrast_var not in design_matrix.columns:
+            raise ValueError(f"Contrast variable '{contrast_var}' not found in design matrix.")
+
         inference = DefaultInference(n_cpus=8)
+
+        # Ensure categorical
+        for col in design_matrix.columns:
+            design_matrix[col] = design_matrix[col].astype("category")
+
         dds = DeseqDataSet(
             counts=count_matrix,
             metadata=design_matrix,
-            design="~condition",
+            design=design_formula,
             refit_cooks=True,
             inference=inference,
         )
         dds.deseq2()
-
-        if len(contrasts) != 2:
-            raise ValueError("Contrast must contain exactly two conditions.")
-
-        contrast = ["condition"] + contrasts
 
         ds = DeseqStats(
             dds,
@@ -39,8 +52,8 @@ def run_pydeseq2(count_matrix, design_matrix, contrasts):
             independent_filter=True,
         )
         ds.summary()
-        summary_df = ds.results_df
-        return summary_df
+        return ds.results_df
+
     except Exception as e:
         print(f"[run_pydeseq2] Error: {e}")
         return None

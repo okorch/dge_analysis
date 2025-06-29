@@ -1,7 +1,7 @@
 from .eda import *
 from config.config import  OUTPUT_PATH
 
-def main(count_matrix, design_matrix):
+def main(count_matrix, design_matrix, contrast_column):
     info_messages = []
 
     count_matrix = check_data_dimensions(count_matrix)
@@ -25,6 +25,8 @@ def main(count_matrix, design_matrix):
     if design_matrix is None or design_matrix.empty:
         info_messages.append("Error: Design matrix is empty or not provided.")
 
+    print(design_matrix, contrast_column)
+
 
     compatibility, compatibility_message = check_compatibility(count_matrix, design_matrix)
     info_messages.append(compatibility_message)
@@ -32,10 +34,14 @@ def main(count_matrix, design_matrix):
     if not compatibility:
         info_messages.append("Error: Design matrix is not compatible with count matrix.")
 
+    print(design_matrix[[contrast_column]])
+
+    design_matrix_plotting = design_matrix[[contrast_column]].rename(columns={contrast_column: "condition"})
+
     # ============ for visualisation =====================
-    lib_df = calculate_library_sizes(count_matrix, design_matrix)
-    pca_result = perform_pca(count_matrix, design_matrix)
-    umap_result = perform_umap(count_matrix, design_matrix)
+    lib_df = calculate_library_sizes(count_matrix, design_matrix_plotting)
+    pca_result = perform_pca(count_matrix, design_matrix_plotting)
+    umap_result = perform_umap(count_matrix, design_matrix_plotting)
     log_data = log_cpm(count_matrix)
     corr_matrix = log_data.corr()
 

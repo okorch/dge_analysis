@@ -30,10 +30,11 @@ count_matrix_data = [
 ]
 
 design_matrix_data = [
-    {"Sample": "Sample 1", "Condition": "control"},
-    {"Sample": "Sample 2", "Condition": "control"},
-    {"Sample": "Sample 3", "Condition": "treatment"},
-    {"Sample": "Sample 4", "Condition": "treatment"},
+    {"Sample": "Run", "Condition": "Level_Condition", "Condition2": "Additional_Condition"},
+    {"Sample": "Sample 1", "Condition": "control", "Condition2": "condition 1"},
+    {"Sample": "Sample 2", "Condition": "control", "Condition2": "condition 2"},
+    {"Sample": "Sample 3", "Condition": "treatment", "Condition2": "condition 1"},
+    {"Sample": "Sample 4", "Condition": "treatment", "Condition2": "condition 2"},
 ]
 
 upload_layout = html.Div([
@@ -58,7 +59,7 @@ upload_layout = html.Div([
     dash_table.DataTable(
         columns=count_matrix_columns,
         data=count_matrix_data,
-        style_table={"overflowX": "auto", "maxWidth": "600px"},
+        style_table={"overflowX": "auto", "maxWidth": "800px"},
         style_cell={"textAlign": "center", "padding": "5px"},
         style_header={"fontWeight": "bold", "backgroundColor": "#f9f9f9"}
     ),
@@ -76,22 +77,30 @@ upload_layout = html.Div([
     html.Hr(),
 
     html.H4("Design Matrix"),
-    html.P("The design matrix defines experimental conditions (e.g., control vs. treatment) for each sample. "
-           "This table should NOT contain headers."),
+    html.P([
+        "The design matrix defines the experimental conditions (e.g., control vs. treatment) for each sample. ",
+        "It should include headers representing different factors or groups, enabling multifactorial analysis. ",
+        html.Br(),
+        "All columns provided in the design matrix will be used in the analysis. ",
+        html.Br(),
+        "For differential expression analysis, you need to specify the column and the levels to compare, ",
+        html.Strong("with the order being tested condition first and control condition second."),
+    ]),
     html.P("Example Design Matrix:"),
 
     dash_table.DataTable(
-        columns=[{"name": "", "id": "Sample"}, {"name": "", "id": "Condition"}],
+        columns=[{"name": "", "id": "Sample"}, {"name": "", "id": "Condition"}, {"name": "", "id": "Condition2"}],
         data=design_matrix_data,
-        style_table={"overflowX": "auto", "maxWidth": "200px"},
+        style_table={"overflowX": "auto", "maxWidth": "600px"},
         style_cell={"textAlign": "center", "padding": "5px"},
-        style_header={"display": "none"}  # Hide headers for no-header format
+        style_header={"display": "none"}
     ),
 
     html.Br(),
 
     html.P("Note:"),
     html.Ul([
+        html.Li("Column names should NOT contain spaces and symbols. Only letters, numbers and underscore are allowed."),
         html.Li("You can include more than two conditions (e.g., multiple treatment groups)."),
         html.Li("You will be asked to choose specific conditions for comparison during the DGE analysis step.")
     ])
@@ -110,7 +119,7 @@ layout = html.Div([
         html.Br(),
 
         dbc.Input(type="text", id="gene-column", placeholder="Enter name of Gene Names or Genes IDs column"),
-        html.Div(id="gene-column-output"),
+        html.Div(id="gene-message"),
         html.Br(),
 
         dcc.Upload(
@@ -119,6 +128,11 @@ layout = html.Div([
         ),
         html.Div(id="design-filename"),
         html.Br(),
+
+        dbc.Input(type="text", id="contrast-column", placeholder="Enter name of column specifying main contrasts in design matrix"),
+        html.Div(id="contrast-message"),
+        html.Br(),
+
     ], style={
         "maxWidth": "600px",
         "margin": "auto",
@@ -133,7 +147,7 @@ layout = html.Div([
 
     dcc.Store(id="stored-counts"),
     dcc.Store(id="stored-design"),
-    dcc.Store(id="stored-gene-column")
+    dcc.Store(id="contrast-column-output"),
 ])
 
 
@@ -170,39 +184,57 @@ def read_count_matrix(contents, gene_column=None):
     return df, None
 
 # Read design matrix
-def read_design_matrix(contents):
+def read_design_matrix(contents, contrast_column):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     text = decoded.decode('utf-8')
     delimiter = '\t' if '\t' in text.splitlines()[0] else ','
-    design_matrix = pd.read_csv(io.StringIO(text), delimiter=delimiter, header=None, names=['condition'])
-    return design_matrix
+
+    try:
+        design_matrix = pd.read_csv(io.StringIO(text), delimiter=delimiter, index_col=0)
+    except Exception as e:
+        return None, f"Failed to parse design matrix: {e}"
+
+    if contrast_column:
+        contrast_column = contrast_column.strip()
+        if contrast_column not in design_matrix.columns:
+            return None, f"Contrast column '{contrast_column}' not found in design matrix."
+
+    return design_matrix, None
 
 # Process uploaded data
 @callback(
     Output("stored-counts", "data"),
     Output("stored-design", "data"),
-    Output("stored-gene-column", "data"),
-    Output("gene-column-output", "children"),
+    Output("contrast-column-output", "data"),
+    Output("gene-message", "children"),
+    Output("contrast-message", "children"),
 
     Input("upload-counts", "contents"),
     Input("upload-design", "contents"),
     Input("gene-column", "value"),
+    Input("contrast-column", "value"),
     prevent_initial_call=True
 )
-def store_files(counts_content, design_content, gene_column):
+def store_files(counts_content, design_content, gene_column, contrast_column):
     if counts_content:
         counts_df, error = read_count_matrix(counts_content, gene_column)
         if counts_df is None:
-            return None, None, None, html.Div(['Gene column not found in count matrix.'])
+            return None, None, None, html.Div(['Gene column not found in count matrix.']), html.Div()
     else:
         counts_df = None
 
-    design_df = read_design_matrix(design_content) if design_content else None
+    if design_content:
+        design_df, error = read_design_matrix(design_content, contrast_column)
+        if design_df is None:
+            return None, None, None, html.Div(), html.Div(['Design matrix column not found in count matrix.'])
+    else:
+        design_df = None
 
     return (
         counts_df.to_json(date_format='iso', orient='split') if counts_df is not None else None,
         design_df.to_json(date_format='iso', orient='split') if design_df is not None else None,
-        gene_column,
-        html.Div()  # no error message
+        contrast_column,
+        html.Div(),
+        html.Div()
     )
