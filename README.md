@@ -23,14 +23,13 @@ The tool consists of 2 different parts:
 
 ### User Input
 
-1. **Count matrix file**: A CSV or TSV file   
-2. **Group mapping file**: A CSV file without headers containing two columns:
+1. **Count matrix file**  
+   A CSV or TSV file containing gene count data.
 
-```
-sample_name_1,control
-sample_name_2,treatment
-...
-```
+2. **Group mapping file**  
+   A CSV or TSV file specifying sample groups and factor levels.
+
+More information about the input formats can be found within the app.
 
 3. Control and treatment groups should be specified when calling tool (see Usage section)
 
@@ -105,9 +104,21 @@ docker run -it --rm -p 8050:8050 dge_pipeline_app
 ## Contributing
 ... in progress ...
 
-## Authors and acknowledgment
-... in progress ...
+## Authors and Acknowledgments
 
+- **Olesia Korchevaia** – [GitLab Profile](https://gitlab.gwdg.de/o.korchevaia)  
+- **Irem Berna Güven** – [GitLab Profile](https://gitlab.gwdg.de/iremberna.gueven)  
+
+---
+
+Special thanks to the open source community.
+
+Resources and tools used in this project:
+
+- [PyDESeq2](https://pydeseq2.readthedocs.io/en/latest/auto_examples/index.html) – Gene expression analysis  
+- [Plotly](https://plotly.com/) – Interactive plotting  
+- [Dash](https://dash.plotly.com/) – Visual dashboards  
+- [ChatGPT](https://chatgpt.com/) – Debugging and help with visual presentation
 
 ## Project status
 development
