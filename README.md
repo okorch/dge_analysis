@@ -86,7 +86,7 @@ python app.py
 ```
 
 ### Instalation from Docker
-To run this app using Docker, make sure Docker is installed on your machine. Then follow these steps:
+To run this app using Docker, make sure Docker is installed and currently running on your machine. Then follow these steps:
 ```bash
 # Clone the repository
 git clone https://github.com/yourname/dge_pipeline.git
@@ -96,7 +96,7 @@ cd dge_pipeline
 docker build -t dge_pipeline_app .
 
 # Run image
-docker run -it --rm -p 8501:8501 dge_pipeline_app
+docker run -it --rm -p 8050:8050 dge_pipeline_app
 ```
 
 ## Support
