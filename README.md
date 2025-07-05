@@ -77,7 +77,54 @@ dge_pipeline/
 
 
 ## Visuals
-... in progress ...
+
+### Library Sizes per Sample  
+This bar plot shows the **total number of sequencing reads** for each sample. It helps identify whether any samples have unusually low sequencing depth, which might affect normalization and downstream analysis.
+
+![Library Sizes](pages/images/library_sizes.png)
+
+---
+
+### PCA of Samples  
+**Principal Component Analysis (PCA)** reduces dimensionality of the data while preserving variation. It visualizes how samples cluster based on their gene expression profiles, helping assess batch effects, group separation (e.g., control vs. disease), or outliers.
+
+![PCA](pages/images/pca.png)
+
+---
+
+### UMAP of Samples  
+**UMAP** (Uniform Manifold Approximation and Projection) offers a non-linear alternative to PCA for visualizing high-dimensional structure. It often preserves local similarities better, helping to detect subtle patterns among samples.
+
+![UMAP](pages/images/umap.png)
+
+---
+
+### Sample-wise Expression Correlation Heatmap  
+This heatmap shows the **pairwise correlation** of gene expression between all samples. Highly correlated groups suggest good biological replicates, while outliers or low correlation may point to technical issues.
+
+![Correlation Heatmap](pages/images/heatmap.png)
+
+---
+
+### Volcano Plot  
+A **volcano plot** visualizes the trade-off between **statistical significance (p-value)** and **biological effect size (log2 fold change)**. Red dots indicate genes that are both significantly and strongly differentially expressed between conditions.
+
+![Volcano Plot](pages/images/volcano_plot.png)
+
+---
+
+### MA Plot   
+This plot shows **log2 fold change** versus **average gene expression (baseMean)**. It highlights genes with strong differential expression and significant adjusted p-values, offering a complementary view to the volcano plot.
+
+![MA Plot](pages/images/MA_plot.png)
+
+---
+
+### P-Value Distribution  
+The histogram displays the **distribution of adjusted p-values** across all genes. A left-skewed distribution indicates many truly differentially expressed genes, while a uniform distribution may suggest few or no significant differences.
+
+![P-value Distribution](pages/images/pvalue_dist.png)
+
 
 ## Installation
 ### Instalation from GitHub
@@ -114,11 +161,15 @@ docker run -it --rm -p 8050:8050 dge_pipeline_app
 ```
 
 ## Support
-... in progress ...
+If you encounter bugs, errors, or unexpected behavior while using the app:
+
+- Please [open an issue](https://gitlab.gwdg.de/o.korchevaia/dge-analysis/-/issues) on this repository.
+- For usage questions or feature suggestions, feel free to start a discussion or send a message via GitLab/GitHub.
+- You may also contact the authors directly if your request is more specific.
 
 ## Contributing
 Contributions are welcome! Feel free to:
-- Open issues for bugs or feature requests 
+- Open issues for feature requests 
 - Submit pull requests for enhancements 
 - Share feedback to improve usability for biologists
 
@@ -139,7 +190,23 @@ Resources and tools used in this project:
 - [ChatGPT](https://chatgpt.com/) – Debugging and help with visual presentation
 
 ## Project status
-In development...
+
+This project is currently **in active development**.
+
+Core functionality is implemented and stable, including:
+
+- Uploading input files
+- Exploratory analysis with PCA/UMAP
+- Differential gene expression analysis using pyDESeq2
+- Interactive plots and downloadable results
+
+Planned future improvements include:
+
+- Improved error handling and feedback in the UI
+- More flexible support for metadata and design matrices
+
+We welcome your feedback and contributions as we continue to improve the app.
+
 
 ## Similar projects 
 [Visit BigOmics RNA-Seq Tool](https://bigomics.ch/rna-seq-data-analysis)
