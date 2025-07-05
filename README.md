@@ -33,7 +33,7 @@ Together, these visual and statistical outputs empower researchers to generate h
 2. **Group mapping file**  
    A CSV or TSV file specifying sample groups and factor levels.
 
-More information about the input formats can be found within the app.
+   More information about the input formats can be found within the app.
 
 3. Control and treatment groups should be specified when calling tool (see Usage section)
 
@@ -125,7 +125,7 @@ Contributions are welcome! Feel free to:
 ## Authors and Acknowledgments
 
 - **Olesia Korchevaia** – [GitLab Profile](https://gitlab.gwdg.de/o.korchevaia)  
-- **Irem Berna Güven** – [GitLab Profile](https://gitlab.gwdg.de/iremberna.gueven)  
+- **Irem Berna Guven** – [GitLab Profile](https://gitlab.gwdg.de/iremberna.gueven)  
 
 ---
 

@@ -174,6 +174,8 @@ def read_count_matrix(contents, gene_column=None):
 
     if gene_column:
         gene_column = gene_column.strip()
+        if gene_column not in df.columns:
+            return None, f"Gene column '{gene_column}' not found in uploaded count matrix."
         try:
             df.set_index(gene_column, inplace=True)
             df.index.name = None

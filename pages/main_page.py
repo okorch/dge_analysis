@@ -7,7 +7,7 @@ load_figure_template('JOURNAL')
 
 dash.register_page(__name__, path="/")
 
-with open("README.md", "r") as f:
+with open("README.md", "r", encoding="utf-8") as f:
     readme_content = f.read()
 
 layout = html.Div([

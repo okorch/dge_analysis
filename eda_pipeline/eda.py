@@ -33,9 +33,10 @@ def clear_not_numerical(data):
 def clear_nan(data):
     try:
         data_copy = data.copy()
+        n_all_genes = data_copy.index.size
         idx_nan = data_copy.index.notnull()
         n_of_nan = data_copy.index.isnull().sum()
-        message = f'There are {n_of_nan} unannotated genes in the data.'
+        message = f'From all genes ({n_all_genes}), there are {n_of_nan} unannotated genes in the data. They are going to be removed.'
         clear_data = data_copy[idx_nan]
         return clear_data, message
     except Exception as e:
@@ -54,7 +55,7 @@ def select_unique_genes(data, keep='first'):
         n_unique_genes = unique_genes.size
         n_all_genes = data_copy.index.size
 
-        message = f'From all genes ({n_all_genes}), found {n_unique_genes} unique genes. Using only {keep} occurrence.'
+        message = f'From all annotated ({n_all_genes}), found {n_unique_genes} unique genes. Using only {keep} occurrence.'
 
         deduped_data = data_copy[~data_copy.index.duplicated(keep=keep)]
         return deduped_data, message
