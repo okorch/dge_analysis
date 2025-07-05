@@ -161,24 +161,39 @@ docker run -it --rm -p 8050:8050 dge_pipeline_app
 ```
 
 ## Support
+
 If you encounter bugs, errors, or unexpected behavior while using the app:
 
 - Please [open an issue](https://gitlab.gwdg.de/o.korchevaia/dge-analysis/-/issues) on this repository.
 - For usage questions or feature suggestions, feel free to start a discussion or send a message via GitLab/GitHub.
 - You may also contact the authors directly if your request is more specific.
 
-## Contributing
-Contributions are welcome! Feel free to:
-- Open issues for feature requests 
-- Submit pull requests for enhancements 
-- Share feedback to improve usability for biologists
+## Work Process and Contributions
 
-## Authors and Acknowledgments
+This project was developed collaboratively over several weeks as part of **Einführung in Python für Data Scientists**.
 
-- **Olesia Korchevaia** – [GitLab Profile](https://gitlab.gwdg.de/o.korchevaia)  
-- **Irem Berna Guven** – [GitLab Profile](https://gitlab.gwdg.de/iremberna.gueven)  
+### Team Members and Contributions
+**Olesia Korchevaia**  – [GitLab Profile](https://gitlab.gwdg.de/o.korchevaia) 
+  - Dashboard interface structure
+  - Created visualizations for results (volcano, MA, PCA, etc.)
+  - Code modularization and Docker setup
+  - Testing, bug fixing, and UI polish
 
----
+**Irem Berna Güven**  [GitLab Profile](https://gitlab.gwdg.de/iremberna.gueven)
+  - EDA pipeline implementation (PCA, UMAP, normalization)
+  - DGE pipeline using PyDESeq2  
+  - README writing, documentation, and visual outputs
+  - Testing, bug fixing, and UI polish
+
+### Timeline and Evolution
+
+- **Week 1**: Tool concept design and literature review  
+- **Week 2**: EDA component development and interface setup  
+- **Week 3**: DGE pipeline integration and visualization testing  
+- **Week 4**: Dockerization and cross-platform compatibility  
+- **Week 5**: Documentation, example results, and final polish
+
+## Acknowledgments
 
 Special thanks to the open source community.
 
