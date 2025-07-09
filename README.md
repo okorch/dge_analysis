@@ -130,8 +130,8 @@ The histogram displays the **distribution of adjusted p-values** across all gene
 ### Instalation from GitHub
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/dge_pipeline.git
-cd dge_pipeline
+git clone https://gitlab.gwdg.de/o.korchevaia/dge-analysis.git
+cd dge-analysis
 
 # Create and activate a virtual environment (optional but recommended)
 python3 -m venv venv
@@ -150,8 +150,8 @@ python app.py
 To run this app using Docker, make sure Docker is installed and currently running on your machine. Then follow these steps:
 ```bash
 # Clone the repository
-git clone https://github.com/yourname/dge_pipeline.git
-cd dge_pipeline
+git clone https://gitlab.gwdg.de/o.korchevaia/dge-analysis.git
+cd dge-analysis
 
 # Build Docker image using provided config files
 docker build -t dge_pipeline_app .
