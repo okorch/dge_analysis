@@ -163,39 +163,56 @@ def display_filenames(counts_filename, design_filename):
     design_text = f"Uploaded: {design_filename}" if design_filename else ""
     return counts_text, design_text
 
+def identify_file_delimiter(first_line):
+    possible_del = ['\t', ';', ',', '|', ' ']
+    for delim in possible_del:
+        if delim in first_line:
+            return delim
+
 # Read count matrix with gene column validation
 def read_count_matrix(contents, gene_column=None):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     text = decoded.decode('utf-8')
+    first_line = text.splitlines()[0]
+    delimiter = identify_file_delimiter(first_line)
 
-    delimiter = '\t' if '\t' in text.splitlines()[0] else ','
-    df = pd.read_csv(io.StringIO(text), delimiter=delimiter)
+    try:
+        count_matrix = pd.read_csv(io.StringIO(text), delimiter=delimiter)
+    except Exception as e:
+        return None, f"Failed to parse design matrix: {e}"
+
+    if count_matrix.empty:
+        return None, f"The file format may be incorrect or unsupported. Please check the file and try again."
 
     if gene_column:
         gene_column = gene_column.strip()
-        if gene_column not in df.columns:
+        if gene_column not in count_matrix.columns:
             return None, f"Gene column '{gene_column}' not found in uploaded count matrix."
         try:
-            df.set_index(gene_column, inplace=True)
-            df.index.name = None
+            count_matrix.set_index(gene_column, inplace=True)
+            count_matrix.index.name = None
         except Exception as e:
             print(f"Gene column parsing failed: {e}")
             return None, str(e)
 
-    return df, None
+    return count_matrix, None
 
 # Read design matrix
 def read_design_matrix(contents, contrast_column):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     text = decoded.decode('utf-8')
-    delimiter = '\t' if '\t' in text.splitlines()[0] else ','
+    first_line = text.splitlines()[0]
+    delimiter = identify_file_delimiter(first_line)
 
     try:
         design_matrix = pd.read_csv(io.StringIO(text), delimiter=delimiter, index_col=0)
     except Exception as e:
         return None, f"Failed to parse design matrix: {e}"
+
+    if design_matrix.empty:
+        return None, f"The file format may be incorrect or unsupported. Please check the file and try again."
 
     if contrast_column:
         contrast_column = contrast_column.strip()
@@ -220,16 +237,16 @@ def read_design_matrix(contents, contrast_column):
 )
 def store_files(counts_content, design_content, gene_column, contrast_column):
     if counts_content:
-        counts_df, error = read_count_matrix(counts_content, gene_column)
+        counts_df, error_message = read_count_matrix(counts_content, gene_column)
         if counts_df is None:
-            return None, None, None, html.Div(['Gene column not found in count matrix.']), html.Div()
+            return None, None, None, html.Div([error_message]), html.Div()
     else:
         counts_df = None
 
     if design_content:
-        design_df, error = read_design_matrix(design_content, contrast_column)
+        design_df, error_message = read_design_matrix(design_content, contrast_column)
         if design_df is None:
-            return None, None, None, html.Div(), html.Div(['Design matrix column not found in count matrix.'])
+            return None, None, None, html.Div(), html.Div([error_message])
     else:
         design_df = None
 

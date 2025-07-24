@@ -19,3 +19,7 @@ env/
 *.log
 *.tmp
 *.bak
+
+#data
+data
+results

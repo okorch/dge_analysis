@@ -1,11 +1,23 @@
 from dash import html, dcc
 import plotly.express as px
 
-
 PLOT_STYLE = {'maxWidth': '800px', 'margin': '0 auto', 'paddingBottom': '30px'}
 
 def eda_dashboard_layout(lib_df, pca_result, umap_result, corr_matrix, info_messages):
 
+    info_div = html.Div([
+        html.H4("Info and Status Messages:"),
+        *[html.P(msg) for msg in info_messages]
+    ], style={
+        'padding': '10px',
+        'backgroundColor': '#f9f9f9',
+        'border': '1px solid #ddd',
+        'marginBottom': '20px'
+    })
+
+    if pca_result is None:
+        layout = html.Div([info_div], style={'padding': '20px'})
+        return layout
 
     # Correlation Heatmap
     corr_fig = px.imshow(
@@ -17,16 +29,6 @@ def eda_dashboard_layout(lib_df, pca_result, umap_result, corr_matrix, info_mess
     )
 
     # === Layout Components ===
-
-    info_div = html.Div([
-        html.H4("Info and Status Messages:"),
-        *[html.P(msg) for msg in info_messages]
-    ], style={
-        'padding': '10px',
-        'backgroundColor': '#f9f9f9',
-        'border': '1px solid #ddd',
-        'marginBottom': '20px'
-    })
 
     layout = html.Div([
         info_div,

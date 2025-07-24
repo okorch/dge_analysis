@@ -59,15 +59,20 @@ def update_eda(counts_data, design_data, contrast_column):
     counts_df = pd.read_json(StringIO(counts_data), orient='split')
     design_df = pd.read_json(StringIO(design_data), orient='split')
 
-    # Run preprocessing
     preprocessed_data = main(counts_df, design_df, contrast_column)
     new_counts_matrix, new_design_matrix = preprocessed_data[0], preprocessed_data[1]
 
     # Convert back to JSON to store
-    new_counts_json = new_counts_matrix.to_json(date_format='iso', orient='split')
-    new_design_json = new_design_matrix.to_json(date_format='iso', orient='split')
+    if (new_counts_matrix is None) or (new_design_matrix is None):
+        new_counts_json, new_design_json = None, None
+    else:
+        new_counts_json = new_counts_matrix.to_json(date_format='iso', orient='split')
+        new_design_json = new_design_matrix.to_json(date_format='iso', orient='split')
 
     # Run preprocessing and layout configuration
     layout = eda_dashboard_layout(*preprocessed_data[2:])
 
     return layout, new_counts_json, new_design_json
+
+
+
