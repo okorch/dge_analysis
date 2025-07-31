@@ -81,49 +81,49 @@ dge_pipeline/
 ### Library Sizes per Sample  
 This bar plot shows the **total number of sequencing reads** for each sample. It helps identify whether any samples have unusually low sequencing depth, which might affect normalization and downstream analysis.
 
-![Library Sizes](pages/images/library_sizes.png)
+![Library Sizes](assets/images_readme/library_sizes.png)
 
 ---
 
 ### PCA of Samples  
 **Principal Component Analysis (PCA)** reduces dimensionality of the data while preserving variation. It visualizes how samples cluster based on their gene expression profiles, helping assess batch effects, group separation (e.g., control vs. disease), or outliers.
 
-![PCA](pages/images/pca.png)
+![PCA](assets/images_readme/pca.png)
 
 ---
 
 ### UMAP of Samples  
 **UMAP** (Uniform Manifold Approximation and Projection) offers a non-linear alternative to PCA for visualizing high-dimensional structure. It often preserves local similarities better, helping to detect subtle patterns among samples.
 
-![UMAP](pages/images/umap.png)
+![UMAP](assets/images_readme/umap.png)
 
 ---
 
 ### Sample-wise Expression Correlation Heatmap  
 This heatmap shows the **pairwise correlation** of gene expression between all samples. Highly correlated groups suggest good biological replicates, while outliers or low correlation may point to technical issues.
 
-![Correlation Heatmap](pages/images/heatmap.png)
+![Correlation Heatmap](assets/images_readme/heatmap.png)
 
 ---
 
 ### Volcano Plot  
 A **volcano plot** visualizes the trade-off between **statistical significance (p-value)** and **biological effect size (log2 fold change)**. Red dots indicate genes that are both significantly and strongly differentially expressed between conditions.
 
-![Volcano Plot](pages/images/volcano_plot.png)
+![Volcano Plot](assets/images_readme/volcano_plot.png)
 
 ---
 
 ### MA Plot   
 This plot shows **log2 fold change** versus **average gene expression (baseMean)**. It highlights genes with strong differential expression and significant adjusted p-values, offering a complementary view to the volcano plot.
 
-![MA Plot](pages/images/MA_plot.png)
+![MA Plot](assets/images_readme/MA_plot.png)
 
 ---
 
 ### P-Value Distribution  
 The histogram displays the **distribution of adjusted p-values** across all genes. A left-skewed distribution indicates many truly differentially expressed genes, while a uniform distribution may suggest few or no significant differences.
 
-![P-value Distribution](pages/images/pvalue_dist.png)
+![P-value Distribution](assets/images_readme/pvalue_dist.png)
 
 
 ## Installation

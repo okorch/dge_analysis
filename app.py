@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, page_container
+from dash import Dash, html, dcc, page_container, get_asset_url
 import dash_bootstrap_components as dbc
 
 app = Dash(__name__,
@@ -7,14 +7,23 @@ app = Dash(__name__,
            external_stylesheets = [dbc.themes.JOURNAL])
 
 app.title = "Differential Gene Expression App"
-
+image_path = 'app_icon.png'
 
 app.layout = html.Div([
-    html.H1(
-        "Differential Gene Expression App",
-        className="text-secondary fw-bold my-4",
-        style={"textAlign": "center"}
-    ),
+    html.Div([
+        html.Img(src=get_asset_url(image_path), style={"height": "100px"}),
+        html.H1(
+            "Differential Gene Expression App",
+            className="text-secondary fw-bold my-0",
+            style={"flex": "1", "textAlign": "center", "margin": "0"}
+        ),
+    ], style={
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "gap": "10px",
+        "padding": "10px"
+    }),
 
     dcc.Location(id="url"),
 
@@ -46,4 +55,5 @@ app.layout = html.Div([
 })
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8050, debug=True)
+    app.run(host="0.0.0.0", port=8050, debug=True) # when creating docker
+    # app.run( port=8050, debug=True)

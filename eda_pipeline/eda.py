@@ -38,8 +38,8 @@ def clear_not_numerical(data):
 
     '''
 
-    only_numerical_columns = data.select_dtypes(exclude=['number']).columns
-    clear_data = data.drop(only_numerical_columns, axis=1)
+    not_numerical_columns = data.select_dtypes(exclude=['number']).columns
+    clear_data = data.drop(not_numerical_columns, axis=1)
 
     return clear_data
 
